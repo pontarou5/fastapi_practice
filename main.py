@@ -28,7 +28,7 @@ def fetch_user():
     cur = conn.cursor()
 
     cur.execute(
-        "INSERT INTO users VALUES (?, ?)",
+        "INSERT INTO users (name, followers) VALUES (?, ?)",
         (name, followers)
     )
 
@@ -53,3 +53,18 @@ def get_users():
     conn.close()
 
     return {"users": rows}
+
+@app.delete("/users/{user_id}")
+def delete_user(user_id: int):
+
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+
+    cur.execute(
+        "DELETE FROM users WHERE id = ?", 
+        (user_id,)
+    )
+    conn.commit()
+    conn.close()
+    
+    return {"message": "user deleted"}
