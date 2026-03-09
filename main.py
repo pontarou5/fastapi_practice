@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 import requests
 import sqlite3
-from database import init_db
+from database import init_db, get_connection
 
 app = FastAPI()
 
@@ -24,7 +24,7 @@ def fetch_user():
     name = data["login"]
     followers = data["followers"]
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -43,7 +43,7 @@ def fetch_user():
 @app.get("/users")
 def get_users(limit: int = 10, offset: int = 0):
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("SELECT * FROM users LIMIT ? OFFSET ?", (limit, offset))
@@ -60,7 +60,7 @@ def get_users(limit: int = 10, offset: int = 0):
 @app.delete("/users/{user_id}")
 def delete_user(user_id: int):
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cur = conn.cursor()
 
     cur.execute(
@@ -76,7 +76,7 @@ def delete_user(user_id: int):
 @app.put("/users/{user_id}")
 def update_user(user_id: int, name: str, followers: int):
 
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cur = conn.cursor()
     
     cur.execute(
