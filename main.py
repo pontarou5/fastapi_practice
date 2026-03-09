@@ -106,3 +106,22 @@ def create_user(user: UserCreate):
     conn.close()
 
     return {"message": "user created"}
+
+@app.get("/users/{user_id}")
+def get_user(user_id: int):
+    
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "SELECT * FROM users WHERE id = ?", 
+        (user_id,)
+    )
+    user = cur.fetchone()
+
+    conn.close()
+
+    if user is None:
+        return {"error": "user not found"}
+        
+    return {"user": user}
