@@ -54,7 +54,7 @@ fastapi_practice/
 Clone the repository:
 
 ```
-git clone https://github.com/YOUR_USERNAME/fastapi_practice.git
+git clone https://github.com/pontarou5/fastapi_practice.git
 cd fastapi_practice
 ```
 
