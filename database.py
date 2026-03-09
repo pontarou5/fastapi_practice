@@ -8,6 +8,7 @@ def init_db():
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
             followers INTEGER
             )
