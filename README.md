@@ -217,7 +217,7 @@ DELETE /users/1
 
 ---
 
-# 🗄 Database
+# Database
 
 The application uses **SQLite**.
 
@@ -263,18 +263,3 @@ DELETE /users/1
 
 ---
 
-# Future Improvements
-
-Possible improvements for this project:
-
-* Add **unit tests**
-* Add **environment variable configuration**
-* Improve **error handling**
-* Add **authentication**
-* Deploy the API
-
----
-
-# License
-
-This project is for **educational purposes**.
