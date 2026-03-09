@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 import requests
 import sqlite3
+from pydantic import BaseModel
 from database import init_db, get_connection
+
+class UserCreate(BaseModel):
+    name: str
+    followers: int
 
 app = FastAPI()
 
@@ -86,3 +91,18 @@ def update_user(user_id: int, name: str, followers: int):
     conn.commit()
     conn.close()
     return {"message": "user updated"}
+
+@app.post("/users")
+def create_user(user: UserCreate):
+    
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute(
+        "INSERT INTO users (name, followers) VALUES (?, ?)",
+        (user.name, user.followers)
+    )
+    conn.commit()
+    conn.close()
+
+    return {"message": "user created"}
