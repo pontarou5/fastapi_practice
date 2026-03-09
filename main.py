@@ -41,18 +41,21 @@ def fetch_user():
     }
 
 @app.get("/users")
-def get_users():
+def get_users(limit: int = 10, offset: int = 0):
 
     conn = sqlite3.connect(DB_NAME)
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM users")
+    cur.execute("SELECT * FROM users LIMIT ? OFFSET ?", (limit, offset))
     
     rows = cur.fetchall()
 
     conn.close()
 
-    return {"users": rows}
+    return {
+        "limit": limit,
+        "offset": offset,
+        "users": rows}
 
 @app.delete("/users/{user_id}")
 def delete_user(user_id: int):
