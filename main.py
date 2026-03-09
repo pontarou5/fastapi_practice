@@ -68,3 +68,18 @@ def delete_user(user_id: int):
     conn.close()
     
     return {"message": "user deleted"}
+
+
+@app.put("/users/{user_id}")
+def update_user(user_id: int, name: str, followers: int):
+
+    conn = sqlite3.connect(DB_NAME)
+    cur = conn.cursor()
+    
+    cur.execute(
+        "UPDATE users SET name = ?, followers = ? WHERE id = ?",
+        (name, followers, user_id)
+    )
+    conn.commit()
+    conn.close()
+    return {"message": "user updated"}
