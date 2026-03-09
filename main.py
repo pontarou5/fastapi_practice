@@ -1,10 +1,14 @@
 from fastapi import FastAPI
 import requests
-import sqlite3
 from pydantic import BaseModel
 from database import init_db, get_connection
+from fastapi import HTTPException
 
 class UserCreate(BaseModel):
+    name: str
+    followers: int
+
+class UserUpdate(BaseModel):
     name: str
     followers: int
 
@@ -12,7 +16,6 @@ app = FastAPI()
 
 init_db()
 
-DB_NAME = "users.db"
 
 @app.get("/")
 def root():
@@ -23,6 +26,9 @@ def fetch_user():
     #GitHub API
     url = "https://api.github.com/users/octocat"
     res = requests.get(url)
+    
+    if res.status_code != 200:
+        raise HTTPException(status_code=500, detail="GitHub API error")
 
     data = res.json()
 
@@ -57,10 +63,15 @@ def get_users(limit: int = 10, offset: int = 0):
 
     conn.close()
 
+    users = [
+    {"id": row[0], "name": row[1], "followers": row[2]}
+    for row in rows
+]
+
     return {
         "limit": limit,
         "offset": offset,
-        "users": rows}
+        "users": users}
 
 @app.delete("/users/{user_id}")
 def delete_user(user_id: int):
@@ -79,17 +90,18 @@ def delete_user(user_id: int):
 
 
 @app.put("/users/{user_id}")
-def update_user(user_id: int, name: str, followers: int):
+def update_user(user_id: int, user: UserUpdate):
 
     conn = get_connection()
     cur = conn.cursor()
     
     cur.execute(
         "UPDATE users SET name = ?, followers = ? WHERE id = ?",
-        (name, followers, user_id)
+        (user.name, user.followers, user_id)
     )
     conn.commit()
     conn.close()
+
     return {"message": "user updated"}
 
 @app.post("/users")
@@ -122,6 +134,7 @@ def get_user(user_id: int):
     conn.close()
 
     if user is None:
-        return {"error": "user not found"}
+        # return {"error": "user not found"}
+        raise HTTPException(status_code=404, detail="User not found")
         
     return {"user": user}
